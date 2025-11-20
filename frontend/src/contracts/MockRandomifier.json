@@ -1,0 +1,47 @@
+[
+        {
+            "type": "function",
+            "name": "requestRandomness",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "requestId",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "event",
+            "name": "RandomDelivered",
+            "inputs": [
+                {
+                    "name": "requestId",
+                    "type": "uint256",
+                    "indexed": true,
+                    "internalType": "uint256"
+                },
+                {
+                    "name": "random",
+                    "type": "uint256",
+                    "indexed": false,
+                    "internalType": "uint256"
+                }
+            ],
+            "anonymous": false
+        },
+        {
+            "type": "event",
+            "name": "RandomRequested",
+            "inputs": [
+                {
+                    "name": "requestId",
+                    "type": "uint256",
+                    "indexed": true,
+                    "internalType": "uint256"
+                }
+            ],
+            "anonymous": false
+        }
+    ]

@@ -1,0 +1,44 @@
+"use client";
+
+import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PrivyProvider } from "@privy-io/react-auth";
+import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
+import { createConfig, WagmiProvider, http } from "wagmi";
+import { baseSepolia } from "wagmi/chains";
+
+const config = createConfig({
+  chains: [baseSepolia],
+  transports: {
+    [baseSepolia.id]: http(),
+  },
+});
+
+const queryClient = new QueryClient();
+
+export default function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <PrivyProvider appId="cmh96xl5100l5jv0c3zz84y1c">
+        <SmartWalletsProvider
+          config={{
+            paymasterContext: {
+              mode: "SPONSORED",
+              calculateGasLimits: true,
+              expiryDuration: 300, // how long validity lasts, in seconds
+              sponsorshipInfo: {
+                webhookData: {}, // optional, depends on paymaster provider
+                smartAccountInfo: {
+                  name: "BICONOMY", // or whatever your provider is
+                  version: "2.0.0",
+                },
+              },
+            },
+          }}
+        >
+          <WagmiProvider config={config}>{children}</WagmiProvider>
+        </SmartWalletsProvider>
+      </PrivyProvider>
+    </QueryClientProvider>
+  );
+}

@@ -1,0 +1,281 @@
+import {
+  useAccount,
+  useWriteContract,
+  useReadContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
+import { BaseError } from "viem";
+import { toast } from "react-toastify";
+import bookingABI from "../abi/booking.json";
+import { Session, SessionStatus } from "@/app/types"; // Import from central types
+
+export type RawSession = {
+  id: bigint;
+  counselor: string;
+  user: string;
+  startTime: bigint;
+  duration: bigint;
+  fee: bigint;
+  status: number;
+};
+
+// ----------------------
+// 🔍 Read a specific session
+// ----------------------
+export function useReadSession(sessionId?: bigint) {
+  const { address, isConnected } = useAccount();
+  const contractAddress = process.env
+    .NEXT_PUBLIC_BOOKING_CONTRACT_ADDRESS as `0x${string}`;
+
+  console.log("🟢 [useReadSession] Initialized:", {
+    address,
+    isConnected,
+    sessionId,
+    contractAddress,
+  });
+
+  const {
+    data: sessionData,
+    isLoading,
+    isError,
+    refetch,
+  } = useReadContract({
+    address: contractAddress,
+    abi: bookingABI,
+    functionName: "getSessionDetails",
+    args: sessionId !== undefined ? [sessionId] : undefined,
+    query: { enabled: !!sessionId && isConnected },
+  });
+
+  console.log("📘 [useReadSession] State:", { isLoading, isError, sessionData });
+
+  let session: Session | null = null;
+
+  if (sessionData) {
+    try {
+      const s = sessionData as RawSession;
+      session = {
+        id: Number(s.id),
+        counselor: s.counselor,
+        user: s.user,
+        startTime: Number(s.startTime),
+        duration: Number(s.duration),
+        fee: s.fee.toString(),
+        sessionStatus: s.status as SessionStatus, // Use enum
+        counselorName: `Counselor: ${s.counselor.substring(0, 6)}...`, // Placeholder
+        sessionDate: new Date(Number(s.startTime) * 1000).toLocaleString(), // Formatted date
+        sessionDays: `${Number(s.duration) / 60} minutes`, // Formatted duration
+        counselorAvatarUrl: "/counselor-avatar.jpg", // Placeholder
+      };
+      console.log("✅ [useReadSession] Parsed:", session);
+    } catch (err) {
+      console.error("❌ [useReadSession] Parse failed:", err);
+    }
+  }
+
+  return { session, isLoading, isError, refetch };
+}
+
+// ----------------------
+// 🧠 Read all my booked session details (new efficient version)
+// ----------------------
+export function useReadMyBookedSessions() {
+  const { address, isConnected } = useAccount();
+  const contractAddress = process.env
+    .NEXT_PUBLIC_BOOKING_CONTRACT_ADDRESS as `0x${string}`;
+
+  console.log("🟣 [useReadMyBookedSessions] Initialized:", {
+    address,
+    isConnected,
+    contractAddress,
+  });
+
+  const {
+    data: sessionsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useReadContract({
+    address: contractAddress,
+    abi: bookingABI,
+    functionName: "getMyBookedSessionDetails",
+    account: address,
+    query: { enabled: isConnected },
+  });
+
+  console.log("📗 ~~~~~~##########~~~~~~~ [useReadMyBookedSessions] Raw:", {
+    isLoading,
+    isError,
+    sessionsData,
+  });
+
+  const sessionsArray: Session[] = Array.isArray(sessionsData)
+    ? sessionsData.map((s: RawSession) => ({
+        id: Number(s.id),
+        counselor: s.counselor,
+        user: s.user,
+        startTime: Number(s.startTime),
+        duration: Number(s.duration),
+        fee: s.fee.toString(),
+        sessionStatus: s.status as SessionStatus, // Use enum
+        counselorName: `Counselor: ${s.counselor.substring(0, 6)}...`, // Placeholder
+        sessionDate: new Date(Number(s.startTime) * 1000).toLocaleString(), // Formatted date
+        sessionDays: `${Number(s.duration) / 60} minutes`, // Formatted duration
+        counselorAvatarUrl: "/counselor-avatar.jpg", // Placeholder
+      }))
+    : [];
+
+  console.log("✅ [useReadMyBookedSessions] Parsed:", sessionsArray);
+
+  return { sessionsArray, isLoading, isError, refetch };
+}
+
+// ----------------------
+// ⚙️ Booking Actions (write hooks)
+// ----------------------
+export function useBookingActions() {
+  const { address, isConnected } = useAccount();
+  const contractAddress = process.env
+    .NEXT_PUBLIC_BOOKING_CONTRACT_ADDRESS as `0x${string}`;
+
+  const {
+    data: hash,
+    writeContractAsync,
+    isPending,
+    error: writeError,
+  } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash });
+
+  console.log("🟩 [useBookingActions] Initialized:", {
+    address,
+    isConnected,
+    contractAddress,
+    isPending,
+    isConfirming,
+    isConfirmed,
+    writeError,
+  });
+
+  // ----- Book Session -----
+  const bookSession = async (
+    counselor: `0x${string}`,
+    startTime: bigint,
+    duration: bigint,
+    fee: bigint
+  ) => {
+    if (!isConnected) {
+      toast.error("Please connect your wallet first!");
+      throw new Error("Wallet not connected");
+    }
+
+    try {
+      const tx = await writeContractAsync({
+        address: contractAddress,
+        abi: bookingABI,
+        functionName: "bookSession",
+        args: [counselor, startTime, duration, fee],
+        account: address,
+        value: fee,
+      });
+      toast.info("⏳ Transaction sent... waiting for confirmation");
+      console.log("TRANSATION HASSSSSSSSSHHHHHHHHH:::::::", tx)
+
+      toast.success("Successfully booked session")
+      return tx;
+    } catch (err) {
+      console.error("🔴 [bookSession] Error:", err);
+      toast.error("Booking failed. Check console for details.");
+      throw err;
+    }
+  };
+
+  // ----- Cancel Session by User -----
+  const cancelSessionByUser = async (sessionId: bigint) => {
+    try {
+      const tx = await writeContractAsync({
+        address: contractAddress,
+        abi: bookingABI,
+        functionName: "cancelSessionByUser",
+        args: [sessionId],
+      });
+      toast.info("⏳ Cancel transaction sent...");
+      return tx;
+    } catch (err) {
+      console.error("🔴 [cancelSessionByUser] Failed:", err);
+      toast.error("Cancel failed.");
+      throw err;
+    }
+  };
+
+  // ----- Cancel Session by Counselor -----
+  const cancelSessionByCounselor = async (sessionId: bigint) => {
+    try {
+      const tx = await writeContractAsync({
+        address: contractAddress,
+        abi: bookingABI,
+        functionName: "cancelSessionByCounselor",
+        args: [sessionId],
+      });
+      toast.info("⏳ Cancel transaction sent...");
+      return tx;
+    } catch (err) {
+      console.error("🔴 [cancelSessionByCounselor] Failed:", err);
+      toast.error("Cancel failed.");
+      throw err;
+    }
+  };
+
+  // ----- Complete Session -----
+  const completeSession = async (sessionId: bigint) => {
+    try {
+      const tx = await writeContractAsync({
+        address: contractAddress,
+        abi: bookingABI,
+        functionName: "completeSession",
+        args: [sessionId],
+      });
+      toast.info("⏳ Completing session...");
+      return tx;
+    } catch (err) {
+      console.error("🔴 [completeSession] Failed:", err);
+      toast.error("Complete session failed.");
+      throw err;
+    }
+  };
+
+  // ----- Mark No Show and Refund -----
+  const markNoShowAndRefund = async (
+    sessionId: bigint,
+    userNoShow: boolean
+  ) => {
+    try {
+      const tx = await writeContractAsync({
+        address: contractAddress,
+        abi: bookingABI,
+        functionName: "markNoShowAndRefund",
+        args: [sessionId, userNoShow],
+      });
+      toast.info("⏳ Marking no-show...");
+      return tx;
+    } catch (err) {
+      console.error("🔴 [markNoShowAndRefund] Failed:", err);
+      toast.error("Mark no-show failed.");
+      throw err;
+    }
+  };
+
+  return {
+    bookSession,
+    cancelSessionByUser,
+    cancelSessionByCounselor,
+    completeSession,
+    markNoShowAndRefund,
+    hash,
+    isPending,
+    isConfirming,
+    isConfirmed,
+    error: writeError,
+  };
+}

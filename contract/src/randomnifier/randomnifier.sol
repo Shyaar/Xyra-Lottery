@@ -9,8 +9,8 @@ pragma solidity ^0.8.30;
  - Owner can set requester, subscriptionId, keyHash, etc.
 */
 
-import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol";
+import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface ILotteryManagerCallback {
@@ -38,7 +38,7 @@ contract Randomifier is VRFConsumerBaseV2, Ownable {
         bytes32 _keyHash,
         uint32 _callbackGasLimit,
         uint16 _requestConfirmations
-    ) VRFConsumerBaseV2(vrfCoordinator) {
+    ) VRFConsumerBaseV2(vrfCoordinator) Ownable(msg.sender) {
         COORDINATOR = VRFCoordinatorV2Interface(vrfCoordinator);
         subscriptionId = _subscriptionId;
         keyHash = _keyHash;
@@ -98,3 +98,7 @@ contract Randomifier is VRFConsumerBaseV2, Ownable {
         }
     }
 }
+
+
+
+

@@ -69,12 +69,11 @@ contract TokenVault is ERC4626, ReentrancyGuard, Ownable {
 
         IERC20 token = IERC20(asset());
         uint256 balBefore = token.balanceOf(address(this));
-        uint256 withdrawn = strategy.withdraw(amount);
+        strategy.withdraw(amount);
         uint256 balAfter = token.balanceOf(address(this));
-        uint256 actual = balAfter - balBefore;
 
-        emit WithdrawnFromStrategy(withdrawn, actual);
-        return actual;
+        emit WithdrawnFromStrategy(amount, balAfter - balBefore);
+        return balAfter - balBefore;
     }
 
     function harvest() external nonReentrant returns (uint256) {
@@ -93,8 +92,8 @@ contract TokenVault is ERC4626, ReentrancyGuard, Ownable {
     function emergencyWithdrawAllFromStrategy() external onlyOwner nonReentrant {
         require(address(strategy) != address(0), "No strategy set");
         uint256 requested = type(uint256).max;
-        uint256 withdrawn = strategy.withdraw(requested);
-        emit WithdrawnFromStrategy(requested, withdrawn);
+        uint256 actual = strategy.withdraw(requested);
+        emit WithdrawnFromStrategy(requested, actual);
     }
 
     /* ========================= INTERNAL HELPERS ========================= */

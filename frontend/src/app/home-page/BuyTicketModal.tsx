@@ -30,7 +30,7 @@ const BuyTicketModal = ({ isOpen, onClose }: BuyTicketModalProps) => {
                     >
                         Buy
                     </button>
-                    <div className="relative ml-4">
+                    {/* <div className="relative ml-4">
                         <button 
                             onClick={() => setTokenSelectorOpen(true)}
                             className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-black font-bold rounded-lg p-3 transition duration-300 ease-in-out"
@@ -41,7 +41,7 @@ const BuyTicketModal = ({ isOpen, onClose }: BuyTicketModalProps) => {
                                 <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <TokenSelectorModal 
