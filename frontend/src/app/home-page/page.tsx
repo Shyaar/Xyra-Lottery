@@ -95,6 +95,11 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
+  function handleDisconnect() {
+    disconnect();
+    router.push("/");
+  }
+
   // -----------------------------
   // Redirect if wallet not connected
   // -----------------------------
@@ -131,16 +136,41 @@ export default function HomePage() {
     setModals((prev) => ({ ...prev, [modalName]: false }));
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-800 text-white">
+    <div className="relative flex flex-col min-h-screen font-serif bg-black text-white overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(234,179,8,0.05),transparent_50%)]" />
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255,255,255,0.03) 2px,
+            rgba(255,255,255,0.03) 4px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(255,255,255,0.03) 2px,
+            rgba(255,255,255,0.03) 4px
+          )`,
+          }}
+        />
+      </div>
       {/* Navigation */}
 
-      <nav className="flex justify-between items-center p-4 md:px-6 border-b border-yellow-400">
-        <div className="text-xl font-bold">LotteryDApp</div>
+      <nav className="relative z-10 flex justify-between items-center px-6 md:px-16 py-4 border-b border-yellow-400/20 backdrop-blur-sm">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-yellow-400 rounded transform rotate-45" />
+          <span className="text-2xl font-bold tracking-tight">Xyra</span>
+        </div>
 
         {isConnected && address && (
           <button
-            onClick={() => disconnect()}
-            className="px-8 py-3 border border-yellow rounded-none font-semibold text-base border border-yellow-400 bg-yellow-600  hover:bg-yellow-400/10 transition-colors"
+            onClick={handleDisconnect}
+            className=" px-6 py-3 bg-yellow-400 text-black rounded font-semibold text-sm hover:bg-yellow-500 transition-all transform hover:scale-105 uppercase tracking-wide"
           >
             {`${address.slice(0, 6)}...${address.slice(-4)}`}
           </button>
@@ -149,12 +179,12 @@ export default function HomePage() {
 
       {/* Main */}
 
-      <main className="p-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 flex flex-col space-y-6">
+      <main className="flex md:grid-cols-3 gap-6  mx-40 py-12">
+        <div className="md:col-span-2 flex flex-col space-y-6 ">
           {/* Winner Section */}
 
-          <section className="border border-green-400 font-semibold bg-green-600/20 text-sm  rounded-none p-6">
-            <h3 className="text-2xl font-bold mb-3 text-yellow">
+          <section className="border  border-yellow-400 font-semibold bg-yellow-400/10 text-sm  rounded-lg p-6">
+            <h3 className="text-2xl font-bold mb-4 text-yellow">
               Round {currentRoundId ? `#${currentRoundId.toString()}` : "#..."}
               {!roundActive &&
                 !isWinnerLoading &&
@@ -163,7 +193,7 @@ export default function HomePage() {
                 " Winner!"}
             </h3>
 
-            <div className="flex flex-col space-y-2 ">
+            <div className="flex flex-col space-y-2 b-4 ">
               {roundActive ? (
                 <>
                   <div>Round is Active</div>
@@ -180,7 +210,7 @@ export default function HomePage() {
                   </div>
 
                   <button
-                    className="bg-gray-700 text-gray-400 font-bold py-2 px-4 rounded-none mt-2 cursor-not-allowed"
+                    className="bg-gray-700 text-gray-400 font-bold py-3 rounded-lg  px-4 mt-4 cursor-not-allowed"
                     disabled
                   >
                     Round has not yet ended
@@ -204,7 +234,7 @@ export default function HomePage() {
                       <>
                         <div>
                           Winning Address:{" "}
-                          <strong className="font-mono">
+                          <strong className=" px-6 py-3 w-full bg-yellow-400 text-black rounded font-semibold text-sm hover:bg-yellow-500 transition-all transform hover:scale-105 uppercase tracking-wide">
                             {address
                               ? `${address.slice(0, 6)}...${address.slice(-4)}`
                               : "N/A"}
@@ -282,7 +312,7 @@ export default function HomePage() {
 
           {/* Buy Tickets Section */}
 
-          <section className="rounded-none p-6 border border-yellow-400 font-semibold bg-yellow-400/10 text-sm ">
+          <section className="rounded-lg p-6 border border-white font-semibold bg-white/10 text-sm ">
             <section className="p-6">
               <h3 className="text-2xl font-bold mb-4">Buy Tickets</h3>
 
@@ -294,7 +324,7 @@ export default function HomePage() {
                 winner takes yield, others get refunded.
               </p>
 
-              <div className="flex justify-between items-center bg-yellow-600 border border-yellow-400">
+              <div className=" px-4 py-2 w-full bg-yellow-400 text-black rounded-lg font-semibold text-sm hover:bg-yellow-500 transition-all transform hover:scale-105 uppercase tracking-wide text-center">
                 <button
                   onClick={() => buyTicket(BigInt(0.0001 * 1e18))} // 0.0001 ETH
                   className={`bg-yellow text-ash rounded-none font-bold py-3 px-6 flex-grow ${
@@ -322,7 +352,7 @@ export default function HomePage() {
 
             <div className="grid grid-cols-4 gap-4 text-center border-t border-yellow pt-6">
               <div>
-                <span className="block text-sm text-gray-300">
+                <span className="block text-sm text-yellow-400">
                   Ticket amount
                 </span>
 
@@ -330,13 +360,13 @@ export default function HomePage() {
               </div>
 
               <div>
-                <span className="block text-sm text-gray-300">Round</span>
+                <span className="block text-sm text-yellow-400">Round</span>
 
                 <strong className="text-xl">#1</strong>
               </div>
 
               <div>
-                <span className="block text-sm text-gray-300">Time Left</span>
+                <span className="block text-sm text-yellow-400">Time Left</span>
 
                 <strong className="text-xl">
                   <Countdown
@@ -349,7 +379,7 @@ export default function HomePage() {
 
               <div className="flex items-end justify-center gap-2">
                 <div>
-                  <p className="text-sm text-gray-300">Participants</p>
+                  <p className="text-sm text-yellow-400">Participants</p>
 
                   <strong className="text-xl">
                     {isEntryCountLoading
@@ -362,7 +392,7 @@ export default function HomePage() {
 
                 <button
                   onClick={() => openModal("participants")}
-                  className="text-yellow hover:underline text-sm"
+                  className="text-yellow-600 hover:underline text-sm"
                 >
                   view all
                 </button>
@@ -373,67 +403,60 @@ export default function HomePage() {
 
         {/* Right Panel */}
 
-        <div className="flex flex-col space-y-6">
-          <section className="rounded-none p-6 border border-yellow-400">
-            <h3 className="text-2xl font-bold mb-4">Your Wallet</h3>
+        <div className="flex flex-col space-y-6 px-2  rounded-lg">
+          {/* wallet */}
 
-            <div className="flex flex-col space-y-3">
-              <div>
-                Address:{" "}
-                <strong className="font-mono">
-                  {address
-                    ? `${address.slice(0, 6)}...${address.slice(-4)}`
-                    : "N/A"}
-                </strong>
+          <section className="rounded-lg p-6 border bg-black/10 border-white/10"> 
+            <h3 className="text-sm mb-4 text-center">Your Wallet</h3>
+
+            <div className="flex justify-center gap-2 text-center items-center">
+              <div className="text-4xl font-bold  text-yellow-400">
+                {" "}
+                {selectedCurrency === "ETH" && ethBalanceData ? (
+                  <>
+                    {parseFloat(formatEther(ethBalanceData.value)).toFixed(4)}{" "}
+                  </>
+                ) : selectedCurrency === "USD" &&
+                  ethBalanceData &&
+                  ethToUsdRate !== null ? (
+                  <>
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+
+                      currency: "USD",
+                    }).format(
+                      parseFloat(formatEther(ethBalanceData.value)) *
+                        ethToUsdRate
+                    )}
+                  </>
+                ) : (
+                  "Loading..."
+                )}
               </div>
 
-              <div className="flex justify-between items-center">
-                <div className="text-4xl font-bold text-yellow-400">
-                  {" "}
-                  {selectedCurrency === "ETH" && ethBalanceData ? (
-                    <>
-                      {parseFloat(formatEther(ethBalanceData.value)).toFixed(4)}{" "}
-                      ETH
-                    </>
-                  ) : selectedCurrency === "USD" &&
-                    ethBalanceData &&
-                    ethToUsdRate !== null ? (
-                    <>
-                      {new Intl.NumberFormat("en-US", {
-                        style: "currency",
-
-                        currency: "USD",
-                      }).format(
-                        parseFloat(formatEther(ethBalanceData.value)) *
-                          ethToUsdRate
-                      )}
-                    </>
-                  ) : (
-                    "Loading..."
-                  )}
-                </div>
-
-                <select
-                  className="border border-yellow text-white text-sm rounded-none p-2"
+              <select
+                  className="bg-transparent px-2 bg-none text-sm text-yellow-400 rounded-none p-2"
                   value={selectedCurrency}
                   onChange={(e) => setSelectedCurrency(e.target.value)}
                 >
-                  <option>ETH</option>
-
+                  <option>Usdt</option>
                   <option>USD</option>
                 </select>
+            </div>
+
+            <div className="flex text-center flex-col space-y-3">
+              <div>
+                {" "}
+                <p className="">
+                  {address
+                    ? `${address.slice(0, 8)}...${address.slice(-4)}`
+                    : "N/A"}
+                </p>
               </div>
 
               <div className="flex space-x-2 mt-4">
-                <button className="bg-yellow-600 border border-yellow-400 text-ash rounded-none font-semibold py-2 px-4 w-full">
+                <button className=" px-6 py-3 w-full bg-yellow-400 text-black rounded font-semibold text-sm hover:bg-yellow-500 transition-all transform hover:scale-105 uppercase tracking-wide">
                   Fund
-                </button>
-
-                <button
-                  onClick={() => openModal("withdrawRefund")}
-                  className="bg-yellow text-ash rounded-none font-semibold py-2 px-4 w-full bg-yellow-600 border border-yellow-400"
-                >
-                  Withdraw
                 </button>
               </div>
             </div>
@@ -441,7 +464,7 @@ export default function HomePage() {
 
           {/* Tickets */}
 
-          <section className="bg-ash rounded-none p-6 border border-yellow-400">
+          <section className="bg-ash rounded-none p-2 border-t border-yellow-400">
             <h3 className="text-2xl font-bold mb-4">My Tickets</h3>
 
             {isUserTicketsLoading && <p>Loading your tickets...</p>}
@@ -482,7 +505,7 @@ export default function HomePage() {
                 return (
                   <div
                     key={ticket.ticketId.toString()} // Use ticketId as key
-                    className="bg-ash border border-yellow rounded-none p-4 flex items-center justify-between"
+                    className="border border-white font-semibold bg-white/10 rounded-lg p-4 flex items-center justify-between"
                   >
                     <div className="w-2/3">
                       <div className="font-bold text-md">
