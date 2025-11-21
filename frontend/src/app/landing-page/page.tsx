@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { useReadUser, useUserActions } from "../../../hooks/useUserRegistry";
-
-// Utility functions to generate random username & avatar
-
+import { ArrowRight, ChevronRight, TrendingUp, Wallet, Zap } from "lucide-react";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -19,7 +17,8 @@ export default function LandingPage() {
 
   // User contract actions
   const { data: isRegistered, isLoading } = useReadUser(address);
-  const { registerUser, isPending, isConfirming, isConfirmed, writeError } = useUserActions(address);
+  const { registerUser, isPending, isConfirming, isConfirmed, writeError } =
+    useUserActions(address);
 
   const hasRegistered = useRef(false);
 
@@ -89,47 +88,62 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-[#0a090a]">
+    <div className="flex flex-col min-h-screen bg-zinc-800 text-white">
       {/* Navigation */}
-      <nav className="flex justify-between items-center p-4 md:px-6 border-b ">
-        <div className="text-xl font-bold">LotteryDApp</div>
+      <nav className="flex justify-between items-center p-4 md:px-8 border-b border-yellow-400">
+        <div className="text-2xl font-bold tracking-tighter">Xyra</div>
         {isConnected && address ? (
           <button
             onClick={() => disconnect()}
-            className="px-8 py-3 btn-glow rounded-none font-semibold text-base"
+            className="px-6 py-2 border border-yellow-400 rounded-md font-semibold bg-yellow-400 text-sm hover:bg-yellow-400/10 transition-colors"
           >
             {`${address.slice(0, 6)}...${address.slice(-4)}`}
           </button>
         ) : (
           <button
             onClick={initializeUser}
-            className="px-8 py-3 btn-glow rounded-none font-semibold text-base"
+            className="px-6 py-2 bg-yellow-500 text-gray-900 rounded-md font-semibold text-sm hover:bg-yellow-400 transition-colors flex items-center"
           >
-            Connect Wallet
+            Get Started <ArrowRight className="w-5 h-5 ml-2" />
           </button>
         )}
       </nav>
 
       {/* Hero */}
-      <main className="flex flex-col justify-center items-center flex-1 p-12 text-center shadow-cyan-glow">
-        <h1 className="text-5xl font-bold mb-4 max-w-xl">Win Without Losing.</h1>
-        <p className="text-base text-gray-400 mb-8 max-w-xl leading-relaxed">
-          A simple, no-loss crypto lottery where your funds are always safe — only the yield goes to the winner.
+      <main className="flex flex-col justify-center items-center flex-1 pt-24 pb-12 text-center">
+        <h1 className="text-6xl font-extrabold mb-4 max-w-2xl tracking-tight">
+          Win Without Losing
+        </h1>
+        <p className="text-lg text-gray-400 mb-8 max-w-2xl leading-relaxed">
+          A simple, no-loss crypto lottery where your funds are always safe —
+          only the yield goes to the winner.
         </p>
-
         <button
-            onClick={initializeUser}
-            className="px-8 py-3 btn-glow rounded-none font-semibold text-base"
-          >
-            Connect Wallet
-          </button>
+          onClick={initializeUser}
+          className="px-10 py-4 bg-yellow-500 text-gray-900 rounded-md font-semibold text-lg hover:bg-yellow-400 transition-colors flex items-center"
+        >
+          Enter Now <ChevronRight className="w-5 h-5 ml-2" />
+        </button>
       </main>
 
+
+
       {/* Footer */}
-      <footer className="flex flex-col justify-center items-center p-6 border-t text-center">
-        <div className="text-sm font-medium mb-1">LotteryDApp</div>
-        <div className="text-xs text-gray-500">© 2025 LotteryDApp. All rights reserved.</div>
+      <footer className="flex flex-col justify-center items-center p-8 border-t border-yellow-400">
+        <div className="text-lg font-semibold mb-2">Xyra</div>
+        <div className="text-sm text-gray-500">
+          © 2025 Xyra. All rights reserved.
+        </div>
       </footer>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-gray-800 p-8 rounded-lg text-center">
+            <p className="text-lg font-semibold">{modalMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
