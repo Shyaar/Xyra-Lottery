@@ -1,7 +1,8 @@
 // hooks/useLotteryManager.ts
 import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
-import { useReadContract, useAccount } from "wagmi";
+import { useReadContract, useAccount, useReadContracts } from "wagmi"; // Added useReadContracts
+import { Abi } from "viem";
 import lotteryManagerABI from "../src/contracts/LotteryManager.json";
 
 export type Ticket = {
@@ -180,3 +181,170 @@ export function useRoundEndTimestamp() {
   return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
 }
 
+export function useEntryCount() {
+  const { address: callerAddress } = useAccount();
+  const caller = callerAddress ?? null;
+  const toastShownRef = useRef<{ success?: boolean; error?: boolean }>({});
+
+  const { data, isLoading, isError, refetch } = useReadContract({
+    address: contractAddress,
+    abi: lotteryManagerABI,
+    functionName: "entryCount",
+    query: { enabled: true },
+  });
+
+  useEffect(() => {
+    console.log("🔍 [useEntryCount:init]", { caller, contractAddress });
+  }, [caller]);
+
+  useEffect(() => {
+    if (isLoading) toast.info("⏳ entryCount loading...", { autoClose: 1000 });
+    if (isError && !toastShownRef.current.error) {
+      console.error("❌ [useEntryCount] Error reading contract", { caller, contractAddress, isError });
+      toast.error("❌ Error fetching entryCount");
+      toastShownRef.current.error = true;
+    }
+    if (data !== undefined && !toastShownRef.current.success) {
+      console.log("✅ [useEntryCount] Result:", { data, caller, contractAddress });
+      toast.success("✅ entryCount loaded");
+      toastShownRef.current.success = true;
+    }
+  }, [data, isLoading, isError, caller]);
+
+  return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
+}
+
+export function useParticipants() {
+  const { data: entryCount, isLoading: isEntryCountLoading } = useEntryCount();
+  const { address: callerAddress } = useAccount();
+  const caller = callerAddress ?? null;
+  const toastShownRef = useRef<{ success?: boolean; error?: boolean }>({});
+
+  const contracts = entryCount
+    ? Array.from({ length: Number(entryCount) }, (_, i) => ({
+        address: contractAddress,
+        abi: lotteryManagerABI as Abi,
+        functionName: "entries",
+        args: [BigInt(i)],
+      }))
+    : [];
+
+  const { data, isLoading, isError, refetch } = useReadContracts({
+    contracts,
+    query: { enabled: !isEntryCountLoading && (entryCount !== undefined && entryCount > 0n) },
+  });
+
+  const participants = data?.map(result => result.result).filter(Boolean) as `0x${string}`[] | undefined;
+
+  useEffect(() => {
+    if (isEntryCountLoading) return;
+
+    if (isLoading) toast.info("⏳ participants loading...", { autoClose: 1000 });
+    if (isError && !toastShownRef.current.error) {
+      console.error("❌ [useParticipants] Error reading contract", { caller, contractAddress, isError });
+      toast.error("❌ Error fetching participants");
+      toastShownRef.current.error = true;
+    }
+    if (participants !== undefined && !toastShownRef.current.success) {
+      console.log("✅ [useParticipants] Result:", { participants, caller, contractAddress });
+      toast.success("✅ participants loaded");
+      toastShownRef.current.success = true;
+    }
+  }, [participants, isLoading, isError, isEntryCountLoading, caller]);
+
+  return { data: participants, isLoading: isLoading || isEntryCountLoading, isError, refetch, callerAddress: caller };
+}
+
+export function useWinner() {
+  const { address: callerAddress } = useAccount();
+  const caller = callerAddress ?? null;
+  const toastShownRef = useRef<{ success?: boolean; error?: boolean }>({});
+
+  const { data, isLoading, isError, refetch } = useReadContract({
+    address: contractAddress,
+    abi: lotteryManagerABI,
+    functionName: "winner",
+    query: { enabled: true },
+  });
+
+  useEffect(() => console.log("🔍 [useWinner:init]", { caller, contractAddress }), [caller]);
+
+  useEffect(() => {
+    if (isLoading) toast.info("⏳ winner loading...", { autoClose: 1000 });
+    if (isError && !toastShownRef.current.error) {
+      console.error("❌ [useWinner] Error reading contract", { caller, contractAddress, isError });
+      toast.error("❌ Error fetching winner");
+      toastShownRef.current.error = true;
+    }
+    if (data !== undefined && !toastShownRef.current.success) {
+      console.log("✅ [useWinner] Result:", { data, caller, contractAddress });
+      toast.success("✅ winner loaded");
+      toastShownRef.current.success = true;
+    }
+  }, [data, isLoading, isError, caller]);
+
+  return { data: data as `0x${string}`, isLoading, isError, refetch, callerAddress: caller };
+}
+
+export function usePrizeAmountRedeemed() {
+  const { address: callerAddress } = useAccount();
+  const caller = callerAddress ?? null;
+  const toastShownRef = useRef<{ success?: boolean; error?: boolean }>({});
+
+  const { data, isLoading, isError, refetch } = useReadContract({
+    address: contractAddress,
+    abi: lotteryManagerABI,
+    functionName: "prizeAmountRedeemed",
+    query: { enabled: true },
+  });
+
+  useEffect(() => console.log("🔍 [usePrizeAmountRedeemed:init]", { caller, contractAddress }), [caller]);
+
+  useEffect(() => {
+    if (isLoading) toast.info("⏳ prizeAmountRedeemed loading...", { autoClose: 1000 });
+    if (isError && !toastShownRef.current.error) {
+      console.error("❌ [usePrizeAmountRedeemed] Error reading contract", { caller, contractAddress, isError });
+      toast.error("❌ Error fetching prizeAmountRedeemed");
+      toastShownRef.current.error = true;
+    }
+    if (data !== undefined && !toastShownRef.current.success) {
+      console.log("✅ [usePrizeAmountRedeemed] Result:", { data, caller, contractAddress });
+      toast.success("✅ prizeAmountRedeemed loaded");
+      toastShownRef.current.success = true;
+    }
+  }, [data, isLoading, isError, caller]);
+
+  return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
+}
+
+export function useExpectedRefund(userAddress?: `0x${string}`) {
+  const { address: callerAddress } = useAccount();
+  const caller = callerAddress ?? null;
+  const toastShownRef = useRef<{ success?: boolean; error?: boolean }>({});
+
+  const { data, isLoading, isError, refetch } = useReadContract({
+    address: contractAddress,
+    abi: lotteryManagerABI,
+    functionName: "expectedRefund",
+    args: userAddress ? [userAddress] : undefined,
+    query: { enabled: !!userAddress },
+  });
+
+  useEffect(() => console.log("🔍 [useExpectedRefund:init]", { caller, contractAddress, userAddress }), [caller, userAddress]);
+
+  useEffect(() => {
+    if (isLoading) toast.info("⏳ expectedRefund loading...", { autoClose: 1000 });
+    if (isError && !toastShownRef.current.error) {
+      console.error("❌ [useExpectedRefund] Error reading contract", { caller, contractAddress, isError });
+      toast.error("❌ Error fetching expectedRefund");
+      toastShownRef.current.error = true;
+    }
+    if (data !== undefined && !toastShownRef.current.success) {
+      console.log("✅ [useExpectedRefund] Result:", { data, caller, contractAddress });
+      toast.success("✅ expectedRefund loaded");
+      toastShownRef.current.success = true;
+    }
+  }, [data, isLoading, isError, caller]);
+
+  return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
+}

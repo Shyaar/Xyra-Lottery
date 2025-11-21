@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../vaults/tokenVault.sol";
 import "../strategy/IStrategy.sol";
-import { LotteryErrors } from "../lib/errors/lotteryErrors.sol";
-import { LotteryEvents } from "../lib/events/lotteryEvents.sol";
+import {LotteryErrors} from "../lib/errors/lotteryErrors.sol";
+import {LotteryEvents} from "../lib/events/lotteryEvents.sol";
 
 import "../interfaces/IWETH.sol";
 
@@ -54,7 +54,7 @@ contract LotteryManager is ReentrancyGuard, Ownable {
     uint256 public nextTicketId = 1;
 
     mapping(address => uint256[]) public userTickets; // user's ticket IDs
-    mapping(uint256 => Ticket) public tickets;        // ticketId => Ticket
+    mapping(uint256 => Ticket) public tickets; // ticketId => Ticket
 
     // -------------------------------
     // Modifiers
@@ -165,7 +165,8 @@ contract LotteryManager is ReentrancyGuard, Ownable {
     }
 
     function closeRound() external nonReentrant onlyActive {
-        if (block.timestamp < roundEndTimestamp) revert LotteryErrors.RoundNotEnded();
+        if (block.timestamp < roundEndTimestamp)
+            revert LotteryErrors.RoundNotEnded();
         roundActive = false;
 
         if (randomifier == address(0)) revert LotteryErrors.RandomifierNotSet();
@@ -216,7 +217,11 @@ contract LotteryManager is ReentrancyGuard, Ownable {
             prizeAmountRedeemed = balanceAfter - balanceBefore;
             prizeSharesRedeemed = sharesNeeded;
 
-            emit LotteryEvents.PrizeRedeemed(roundId, sharesNeeded, prizeAmountRedeemed);
+            emit LotteryEvents.PrizeRedeemed(
+                roundId,
+                sharesNeeded,
+                prizeAmountRedeemed
+            );
         } else {
             prizeAmountRedeemed = 0;
             prizeSharesRedeemed = 0;
@@ -275,7 +280,9 @@ contract LotteryManager is ReentrancyGuard, Ownable {
         return shares == 0 ? 0 : VAULT.convertToAssets(shares);
     }
 
-    function getUserTickets(address user) external view returns (Ticket[] memory) {
+    function getUserTickets(
+        address user
+    ) external view returns (Ticket[] memory) {
         uint256[] memory ids = userTickets[user];
         Ticket[] memory userTicketList = new Ticket[](ids.length);
         for (uint256 i = 0; i < ids.length; i++) {
@@ -284,7 +291,9 @@ contract LotteryManager is ReentrancyGuard, Ownable {
         return userTicketList;
     }
 
-    function getTicketById(uint256 ticketId) external view returns (Ticket memory) {
+    function getTicketById(
+        uint256 ticketId
+    ) external view returns (Ticket memory) {
         return tickets[ticketId];
     }
 

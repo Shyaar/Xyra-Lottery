@@ -78,7 +78,7 @@ export default function LandingPage() {
       try {
         await registerUser();
         toast.success(`Welcome`);
-        router.push("/userRegistered");
+        router.push("/home-page");
       } catch (err) {
         toast.error("Registration failed");
         await disconnect();
@@ -89,21 +89,21 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-black">
+    <div className="flex flex-col min-h-screen bg-white text-[#0a090a]">
       {/* Navigation */}
-      <nav className="flex justify-between items-center p-4 md:px-6 border-b border-gray-200">
+      <nav className="flex justify-between items-center p-4 md:px-6 border-b ">
         <div className="text-xl font-bold">LotteryDApp</div>
         {isConnected && address ? (
           <button
-            onClick={disconnect}
-            className="px-8 py-3 bg-black text-white rounded-md font-semibold text-base"
+            onClick={() => disconnect()}
+            className="px-8 py-3 btn-glow rounded-none font-semibold text-base"
           >
             {`${address.slice(0, 6)}...${address.slice(-4)}`}
           </button>
         ) : (
           <button
             onClick={initializeUser}
-            className="px-8 py-3 bg-black text-white rounded-md font-semibold text-base"
+            className="px-8 py-3 btn-glow rounded-none font-semibold text-base"
           >
             Connect Wallet
           </button>
@@ -111,21 +111,22 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <main className="flex flex-col justify-center items-center flex-1 p-12 text-center">
+      <main className="flex flex-col justify-center items-center flex-1 p-12 text-center shadow-cyan-glow">
         <h1 className="text-5xl font-bold mb-4 max-w-xl">Win Without Losing.</h1>
-        <p className="text-base text-gray-600 mb-8 max-w-xl leading-relaxed">
+        <p className="text-base text-gray-400 mb-8 max-w-xl leading-relaxed">
           A simple, no-loss crypto lottery where your funds are always safe — only the yield goes to the winner.
         </p>
 
-        {showModal && (
-          <div className="mt-4 p-4 bg-yellow-100 text-black rounded-md">
-            {modalMessage}
-          </div>
-        )}
+        <button
+            onClick={initializeUser}
+            className="px-8 py-3 btn-glow rounded-none font-semibold text-base"
+          >
+            Connect Wallet
+          </button>
       </main>
 
       {/* Footer */}
-      <footer className="flex flex-col justify-center items-center p-6 border-t border-gray-200 text-center">
+      <footer className="flex flex-col justify-center items-center p-6 border-t text-center">
         <div className="text-sm font-medium mb-1">LotteryDApp</div>
         <div className="text-xs text-gray-500">© 2025 LotteryDApp. All rights reserved.</div>
       </footer>
