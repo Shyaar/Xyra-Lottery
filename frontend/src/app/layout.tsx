@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ["latin"] });
 
 import { headers } from "next/headers";
-import ContextProvider from "@/app/context";
+import ContextProvider from "./context";
 
 
 export default async function RootLayout({
@@ -41,3 +41,4 @@ export default async function RootLayout({
     </html>
   );
 }
+

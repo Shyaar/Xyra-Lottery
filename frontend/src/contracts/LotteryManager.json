@@ -3,9 +3,9 @@
         "type": "constructor",
         "inputs": [
             {
-                "name": "_weth",
+                "name": "_usdc",
                 "type": "address",
-                "internalType": "contract IWETH"
+                "internalType": "contract IERC20"
             },
             {
                 "name": "_vault",
@@ -16,12 +16,8 @@
         "stateMutability": "nonpayable"
     },
     {
-        "type": "receive",
-        "stateMutability": "payable"
-    },
-    {
         "type": "function",
-        "name": "ASSET",
+        "name": "USDC",
         "inputs": [],
         "outputs": [
             {
@@ -60,19 +56,6 @@
     },
     {
         "type": "function",
-        "name": "WETH",
-        "inputs": [],
-        "outputs": [
-            {
-                "name": "",
-                "type": "address",
-                "internalType": "contract IWETH"
-            }
-        ],
-        "stateMutability": "view"
-    },
-    {
-        "type": "function",
         "name": "awaitingRandomness",
         "inputs": [],
         "outputs": [
@@ -87,9 +70,15 @@
     {
         "type": "function",
         "name": "buyTicket",
-        "inputs": [],
+        "inputs": [
+            {
+                "name": "amount",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
         "outputs": [],
-        "stateMutability": "payable"
+        "stateMutability": "nonpayable"
     },
     {
         "type": "function",
@@ -111,6 +100,19 @@
         "inputs": [],
         "outputs": [],
         "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "cooldownPeriod",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
         "type": "function",
@@ -247,6 +249,19 @@
     },
     {
         "type": "function",
+        "name": "nextRoundStartTime",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
         "name": "nextTicketId",
         "inputs": [],
         "outputs": [
@@ -283,6 +298,20 @@
             }
         ],
         "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "performClose",
+        "inputs": [],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "performStart",
+        "inputs": [],
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
         "type": "function",
@@ -402,6 +431,19 @@
     },
     {
         "type": "function",
+        "name": "roundDuration",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
         "name": "roundEndTimestamp",
         "inputs": [],
         "outputs": [
@@ -428,12 +470,38 @@
     },
     {
         "type": "function",
+        "name": "setCooldownPeriod",
+        "inputs": [
+            {
+                "name": "_seconds",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
         "name": "setRandomifier",
         "inputs": [
             {
                 "name": "_randomifier",
                 "type": "address",
                 "internalType": "address"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setRoundDuration",
+        "inputs": [
+            {
+                "name": "_seconds",
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
         "outputs": [],
@@ -454,6 +522,32 @@
                 "name": "",
                 "type": "uint256",
                 "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "shouldCloseRound",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "shouldStartRound",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
             }
         ],
         "stateMutability": "view"
@@ -567,6 +661,19 @@
             }
         ],
         "stateMutability": "view"
+    },
+    {
+        "type": "event",
+        "name": "CooldownUpdated",
+        "inputs": [
+            {
+                "name": "_time",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
     },
     {
         "type": "event",
@@ -690,6 +797,19 @@
     },
     {
         "type": "event",
+        "name": "RoundDurationUpdated",
+        "inputs": [
+            {
+                "name": "_time",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
         "name": "RoundStarted",
         "inputs": [
             {
@@ -744,7 +864,17 @@
     },
     {
         "type": "error",
-        "name": "EthTransferFailed",
+        "name": "CannotClose",
+        "inputs": []
+    },
+    {
+        "type": "error",
+        "name": "CannotStart",
+        "inputs": []
+    },
+    {
+        "type": "error",
+        "name": "ERC20TransferFailed",
         "inputs": []
     },
     {
@@ -754,7 +884,7 @@
     },
     {
         "type": "error",
-        "name": "MustSendETH",
+        "name": "MustSendUSDC",
         "inputs": []
     },
     {

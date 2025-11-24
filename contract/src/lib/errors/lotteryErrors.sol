@@ -9,7 +9,7 @@ library LotteryErrors {
     error ZeroAddress();
     error InvalidDuration();
     error PreviousRoundNotCleaned();
-    error MustSendETH();
+    error MustSendUSDC();
     error NoSharesMinted();
     error RoundNotEndedOrAwaiting();
     error RandomifierNotSet();
@@ -21,4 +21,7 @@ library LotteryErrors {
     error NotWinner();
     error PrizeAlreadyClaimed();
     error NoPrizeToClaim();
+    error CannotStart();
+    error CannotClose();
+    error ERC20TransferFailed();
 }

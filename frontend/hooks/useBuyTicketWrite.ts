@@ -26,7 +26,7 @@ export function useBuyTicketWrite() {
     error: confirmError,
   } = useWaitForTransactionReceipt({ hash });
 
-  const buyTicket = (value: bigint) => {
+  const buyTicket = (amount: bigint) => {
     if (!caller) {
       toast.error("Please connect your wallet to buy a ticket.");
       return;
@@ -36,8 +36,7 @@ export function useBuyTicketWrite() {
       address: contractAddress,
       abi: lotteryManagerABI,
       functionName: "buyTicket",
-      args: [], // no arguments required
-      value, // send ETH
+      args: [amount], // <-- REQUIRED
     });
   };
 

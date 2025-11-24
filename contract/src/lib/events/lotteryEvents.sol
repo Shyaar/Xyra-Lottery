@@ -21,4 +21,6 @@ library LotteryEvents {
     );
     event PrincipalClaimed(address indexed user, uint256 amount);
     event PrizeClaimed(address indexed winner, uint256 amount);
+    event RoundDurationUpdated(uint256 _time);
+    event CooldownUpdated(uint256 _time);
 }

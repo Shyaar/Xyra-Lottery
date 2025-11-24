@@ -1,46 +1,66 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 interface CountdownProps {
-  targetTimestamp: bigint | undefined; // Unix timestamp in seconds (from contract)
+  targetTimestamp: number | undefined;   // UNIX timestamp in seconds
+  onComplete?: () => void;               // Optional callback when timer ends
 }
 
-const Countdown: React.FC<CountdownProps> = ({ targetTimestamp }) => {
-  const [timeLeft, setTimeLeft] = useState("");
+const Countdown: React.FC<CountdownProps> = ({ targetTimestamp, onComplete }) => {
+  const [timeLeft, setTimeLeft] = useState<number>(0);
 
   useEffect(() => {
-    if (!targetTimestamp) {
-      setTimeLeft("Loading...");
-      return;
-    }
+    if (!targetTimestamp) return;
 
-    // Convert bigint timestamp (seconds) to milliseconds
-    const targetMs = Number(targetTimestamp) * 1000;
+    const targetMs = targetTimestamp * 1000;
 
-    const calculateTimeLeft = () => {
+    const update = () => {
       const now = Date.now();
-      const difference = targetMs - now;
+      const diff = targetMs - now;
 
-      if (difference <= 0) {
-        setTimeLeft("0h 0m 0s"); // Or "Round Ended"
+      if (diff <= 0) {
+        setTimeLeft(0);
+        if (onComplete) onComplete();
         return;
       }
 
-      const hours = Math.floor(difference / (1000 * 60 * 60));
-      const minutes = Math.floor((difference / (1000 * 60)) % 60);
-      const seconds = Math.floor((difference / 1000) % 60);
-
-      setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+      setTimeLeft(diff);
     };
 
-    calculateTimeLeft(); // Initial calculation
-    const timer = setInterval(calculateTimeLeft, 1000);
-
-    return () => clearInterval(timer);
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
   }, [targetTimestamp]);
 
-  return <>{timeLeft}</>;
+  // Format HH:MM:SS
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  const formatted = formatTime(timeLeft);
+
+  // UI conditions
+  const isEnding = timeLeft <= 10_000 && timeLeft > 0; // under 10 seconds
+  const isCritical = timeLeft <= 5_000 && timeLeft > 0; // under 5 seconds
+
+  return (
+    <span
+      className={`
+        ${isEnding ? "text-red-500 font-bold" : "text-white"}
+        ${isCritical ? "animate-pulse" : ""}
+      `}
+    >
+      {formatted}
+    </span>
+  );
 };
 
 export default Countdown;

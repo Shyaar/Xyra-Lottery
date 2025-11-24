@@ -12,8 +12,8 @@ import "../src/randomnifier/mockRand.sol";
 contract Deploy is Script {
 
     // --- Base mainnet addresses ---
-    // Base Mainnet WETH address (canonical L2 WETH)
-    address constant BASE_WETH = 0x4200000000000000000000000000000000000006;
+    // Base Mainnet WUSDT address (canonical L2 WUSDT)
+    address constant BASE_WUSDC = 0x036CbD53842c5426634e7929541eC2318f3dCF7e;
 
     function run() external {
 
@@ -23,7 +23,7 @@ contract Deploy is Script {
         // 1. Deploy the VAULT (ERC4626)
         // ---------------------------------------------------------
         TokenVault vault = new TokenVault(
-            IERC20(BASE_WETH), 
+            IERC20(BASE_WUSDC), 
             "Xyra Yield Vault",
             "XYRA-V"
         );
@@ -32,7 +32,7 @@ contract Deploy is Script {
         // 2. Deploy Strategy (Mock for now)
         // ---------------------------------------------------------
         MockStrategy strategy = new MockStrategy(
-            IERC20(BASE_WETH),
+            IERC20(BASE_WUSDC),
             address(vault)
         );
 
@@ -48,7 +48,7 @@ contract Deploy is Script {
         // 4. Deploy LotteryManager
         // ---------------------------------------------------------
         LotteryManager lottery = new LotteryManager(
-            IWETH(BASE_WETH),
+            IERC20(BASE_WUSDC),
             vault
         );
 
