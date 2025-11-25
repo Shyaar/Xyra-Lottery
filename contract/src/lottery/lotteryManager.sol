@@ -332,18 +332,38 @@ contract LotteryManager is ReentrancyGuard, Ownable {
         emit LotteryEvents.PrincipalClaimed(msg.sender, amountReceived);
     }
 
-    function claimPrize() external nonReentrant onlyEnded {
-        if (msg.sender != winner) revert LotteryErrors.NotWinner();
-        if (prizeClaimed) revert LotteryErrors.PrizeAlreadyClaimed();
-        if (prizeAmountRedeemed == 0) revert LotteryErrors.NoPrizeToClaim();
+function claimPrize() external nonReentrant onlyEnded {
+    if (msg.sender != winner) revert LotteryErrors.NotWinner();
+    if (prizeClaimed) revert LotteryErrors.PrizeAlreadyClaimed();
+    
+    prizeClaimed = true;
 
-        prizeClaimed = true;
+    uint256 totalPayout = prizeAmountRedeemed;
 
-        bool sent = USDC.transfer(winner, prizeAmountRedeemed);
-        if (!sent) revert LotteryErrors.ERC20TransferFailed();
+    // ------------ Add principal redemption for winner --------------
+    uint256 winnerShares = sharesOf[msg.sender];
+    if (winnerShares > 0 && !principalClaimed[msg.sender]) {
+        principalClaimed[msg.sender] = true;
+        sharesOf[msg.sender] = 0;
 
-        emit LotteryEvents.PrizeClaimed(winner, prizeAmountRedeemed);
+        uint256 beforeBal = USDC.balanceOf(address(this));
+        VAULT.redeem(winnerShares, address(this), address(this));
+        uint256 afterBal = USDC.balanceOf(address(this));
+
+        uint256 principal = afterBal - beforeBal;
+        totalPayout += principal;
+
+        emit LotteryEvents.PrincipalClaimed(msg.sender, principal);
     }
+    // ---------------------------------------------------------------
+
+    // Send full payout (prize + principal)
+    bool sent = USDC.transfer(msg.sender, totalPayout);
+    if (!sent) revert LotteryErrors.ERC20TransferFailed();
+
+    emit LotteryEvents.PrizeClaimed(winner, totalPayout);
+}
+
 
     // -------------------------------
     // Views

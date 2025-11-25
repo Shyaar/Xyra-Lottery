@@ -26,6 +26,7 @@ import { useClaimPrize } from "../../../hooks/useClaimPrize";
 import { useClaimPrincipal } from "../../../hooks/useClaimPrincipal";
 import { formatUnits, parseUnits } from "viem";
 import { useApproveUSDC, useUSDCAllowance } from "../../../hooks/useApproval";
+import { useVaultWrite } from "../../../hooks/useVault";
 import {
   Clock,
   Ticket,
@@ -43,7 +44,7 @@ import {
   RefreshCcw,
   Timer,
   Crown,
-  NotebookPen
+  NotebookPen,
 } from "lucide-react";
 
 type Ticket = {
@@ -67,9 +68,11 @@ export default function HomePage() {
   const { data: entryCount, isLoading: isEntryCountLoading } = useEntryCount();
 
   // Fetch USDC Balance
+  const usdcTokenAddress = process.env
+    .NEXT_PUBLIC_USDC_TOKEN_ADDRESS as `0x${string}`;
   const { data: usdcBalanceData } = useBalance({
     address: address,
-    token: process.env.NEXT_PUBLIC_USDC_TOKEN_ADDRESS as `0x${string}`,
+    token: usdcTokenAddress,
   });
 
   const { data: winnerAddress, isLoading: isWinnerLoading } = useWinner();
@@ -88,6 +91,26 @@ export default function HomePage() {
     isLoading: isApproving,
     isSuccess: isApproved,
   } = useApproveUSDC();
+
+  const { earnToStrategy, withdrawFromStrategy, emergencyWithdrawAllFromStrategy } = useVaultWrite();
+  const vaultContractAddress = process.env
+    .NEXT_PUBLIC_TOKEN_VAULT_CONTRACT_ADDRESS as `0x${string}`;
+  const { data: vaultBalanceData } = useBalance({
+    address: vaultContractAddress,
+    token: usdcTokenAddress,
+  });
+
+  const handleRoundEnd = () => {
+    console.log("Round ended. Earning to strategy.");
+    if (vaultBalanceData) {
+      earnToStrategy(vaultBalanceData.value);
+
+      setTimeout(() => {
+        console.log("Withdrawing from strategy.");
+        emergencyWithdrawAllFromStrategy();
+      }, 60000); // 1 minute
+    }
+  };
 
   const [modals, setModals] = useState({
     connectWallet: false,
@@ -245,7 +268,7 @@ export default function HomePage() {
                   </div>
 
                   <button
-                    className="bg-gray-700 text-gray-400 font-bold py-3 rounded-lg px-4 mt-4 cursor-not-allowed flex items-center justify-center"
+                    className="bg-gray-700 text-gray-400 font-bold text-center py-3 rounded-lg px-4 mt-4 cursor-not-allowed flex items-center justify-center"
                     disabled
                   >
                     <Clock className="w-5 h-5 mr-2" /> Round has not yet ended
@@ -333,7 +356,7 @@ export default function HomePage() {
           <section className="rounded-lg p-6 border border-white font-semibold bg-white/10 text-sm">
             <section className="p-6">
               <h3 className="text-2xl font-bold mb-4 flex items-center">
-                <Ticket className="w-6 h-6 mr-2" /> Buy Tickets
+                <Ticket className="w-6 h-6 mr-2 text-center" /> Buy Tickets
               </h3>
 
               <p className="mb-6 text-gray-300">
@@ -397,9 +420,7 @@ export default function HomePage() {
                         ? Number(roundEndTimestamp)
                         : undefined
                     }
-                    onComplete={() => {
-                      // console.log("Timer finished — Round ended!");
-                    }}
+                    onComplete={handleRoundEnd}
                   />
                 </strong>
               </div>
