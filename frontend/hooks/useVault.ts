@@ -1,105 +1,50 @@
-// hooks/useVaultWrite.ts
-import { useEffect, useRef } from "react";
+// ============================================================
+// 🏦 useVault.ts — Full Logging + Refactored to Your New Style
+// ============================================================
+
+import {
+  useAccount,
+  useWriteContract,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useBalance,
+} from "wagmi";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import tokenVaultABI from "../src/contracts/TokenVault.json";
 
-const contractAddress = process.env.NEXT_PUBLIC_TOKEN_VAULT_CONTRACT_ADDRESS as `0x${string}`;
+// ============================================================
+// 🔍 READ: VAULT BALANCE (USDC)
+// ============================================================
+export function useVaultBalance() {
+  const vaultAddress = process.env
+    .NEXT_PUBLIC_TOKEN_VAULT_CONTRACT_ADDRESS as `0x${string}`;
+  const usdcAddress = process.env
+    .NEXT_PUBLIC_USDC_TOKEN_ADDRESS as `0x${string}`;
 
-export function useVaultWrite() {
-  const { address: callerAddress } = useAccount();
-  const caller = callerAddress ?? null;
-  const toastShownRef = useRef<{ success?: boolean; error?: boolean }>({});
+  console.log("🔍 [useVaultBalance:init]", {
+    vaultAddress,
+    usdcAddress,
+  });
 
-  const {
-    data: hash,
-    writeContract,
-    isPending: isWritePending,
-    isError: isWriteError,
-    error: writeError,
-  } = useWriteContract();
-
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    isError: isConfirmError,
-    error: confirmError,
-  } = useWaitForTransactionReceipt({ hash });
-
-  const earnToStrategy = (amount: bigint) => {
-    if (!caller) {
-      toast.error("Please connect your wallet.");
-      return;
-    }
-
-    writeContract({
-      address: contractAddress,
-      abi: tokenVaultABI,
-      functionName: "earnToStrategy",
-      args: [amount],
-    });
-  };
-
-  const withdrawFromStrategy = (amount: bigint) => {
-    if (!caller) {
-      toast.error("Please connect your wallet.");
-      return;
-    }
-
-    writeContract({
-      address: contractAddress,
-      abi: tokenVaultABI,
-      functionName: "withdrawFromStrategy",
-      args: [amount],
-    });
-  };
-
-  const emergencyWithdrawAllFromStrategy = () => {
-    if (!caller) {
-      toast.error("Please connect your wallet.");
-      return;
-    }
-
-    writeContract({
-      address: contractAddress,
-      abi: tokenVaultABI,
-      functionName: "emergencyWithdrawAllFromStrategy",
-    });
-  };
+  const { data, isLoading, isError, refetch } = useBalance({
+    address: vaultAddress,
+    token: usdcAddress,
+    query: {
+      enabled: !!vaultAddress && !!usdcAddress,
+    },
+  });
 
   useEffect(() => {
-    if (isWritePending) {
-      toast.info("⏳ Confirm transaction in your wallet...", { autoClose: false });
-    }
-    if (isWriteError && !toastShownRef.current.error) {
-      console.error("❌ [useVaultWrite] Error initiating transaction", { caller, contractAddress, writeError });
-      toast.error(`❌ Error initiating transaction: ${writeError?.message || "Unknown error"}`);
-      toastShownRef.current.error = true;
-    }
-  }, [isWritePending, isWriteError, writeError, caller]);
+    // if (isLoading) console.log("⏳ [useVaultBalance] Loading vault balance...");
+    // if (isError) console.log("❌ [useVaultBalance] Failed to fetch balance");
+    if (data)
+      console.log("💰 [useVaultBalance] Balance fetched:", {
+        formatted: data.formatted,
+      });
+  }, [data, isLoading, isError]);
 
-  useEffect(() => {
-    if (isConfirming) {
-      toast.info("⏳ Confirming transaction...", { autoClose: false });
-    }
-    if (isConfirmed) {
-      toast.dismiss();
-      toast.success("✅ Transaction successful!");
-    }
-    if (isConfirmError && !toastShownRef.current.error) {
-      console.error("❌ [useVaultWrite] Error confirming transaction", { caller, contractAddress, confirmError });
-      toast.error(`❌ Error confirming transaction: ${confirmError?.message || "Unknown error"}`);
-      toastShownRef.current.error = true;
-    }
-  }, [isConfirming, isConfirmed, isConfirmError, confirmError, caller]);
-
-  return {
-    earnToStrategy,
-    withdrawFromStrategy,
-    emergencyWithdrawAllFromStrategy,
-    isLoading: isWritePending || isConfirming,
-    isSuccess: isConfirmed,
-    isError: isWriteError || isConfirmError,
-    error: writeError || confirmError,
-  };
+  return { balance: data, isLoading, isError, refetch };
 }
+
+

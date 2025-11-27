@@ -37,12 +37,12 @@ export function useApproveUSDC() {
 
     setAmountToApprove(amount);
 
-    console.log("💡 [useApproveUSDC] Attempting to approve USDC", {
-      caller,
-      amount,
-      contractAddress: USDC_ADDRESS,
-      spender: LOTTERY_MANAGER_ADDRESS,
-    });
+    // console.log("💡 [useApproveUSDC] Attempting to approve USDC", {
+    //   caller,
+    //   amount,
+    //   contractAddress: USDC_ADDRESS,
+    //   spender: LOTTERY_MANAGER_ADDRESS,
+    // });
 
     writeContract({
       address: USDC_ADDRESS,
@@ -54,16 +54,16 @@ export function useApproveUSDC() {
 
   useEffect(() => {
     if (isWritePending) {
-      toast.info("⏳ Confirm transaction in your wallet...", { autoClose: false });
+      toast.info("⏳ Confirm transaction in your wallet...");
     }
 
     if (isWriteError && !toastShownRef.current.error) {
-      console.error("❌ [useApproveUSDC] Error initiating transaction", {
-        caller,
-        contractAddress: USDC_ADDRESS,
-        amountToApprove,
-        writeError,
-      });
+      // console.error("❌ [useApproveUSDC] Error initiating transaction", {
+      //   caller,
+      //   contractAddress: USDC_ADDRESS,
+      //   amountToApprove,
+      //   writeError,
+      // });
       toast.error(`❌ Error approving USDC: ${writeError?.message || "Unknown error"}`);
       toastShownRef.current.error = true;
     }
@@ -71,27 +71,27 @@ export function useApproveUSDC() {
 
   useEffect(() => {
     if (isConfirming) {
-      toast.info("⏳ Confirming transaction...", { autoClose: false });
+      toast.info("⏳ Confirming transaction...");
     }
 
     if (isConfirmed && !toastShownRef.current.success) {
       toast.dismiss();
-      console.log("✅ [useApproveUSDC] USDC approved successfully", {
-        caller,
-        contractAddress: USDC_ADDRESS,
-        amount: amountToApprove,
-      });
+      // console.log("✅ [useApproveUSDC] USDC approved successfully", {
+      //   caller,
+      //   contractAddress: USDC_ADDRESS,
+      //   amount: amountToApprove,
+      // });
       toast.success("✅ USDC approved successfully!");
       toastShownRef.current.success = true;
     }
 
     if (isConfirmError && !toastShownRef.current.error) {
-      console.error("❌ [useApproveUSDC] Error confirming transaction", {
-        caller,
-        contractAddress: USDC_ADDRESS,
-        amountToApprove,
-        confirmError,
-      });
+      // console.error("❌ [useApproveUSDC] Error confirming transaction", {
+      //   caller,
+      //   contractAddress: USDC_ADDRESS,
+      //   amountToApprove,
+      //   confirmError,
+      // });
       toast.error(`❌ Error confirming USDC approval: ${confirmError?.message || "Unknown error"}`);
       toastShownRef.current.error = true;
     }
@@ -119,34 +119,34 @@ export function useUSDCAllowance() {
   });
 
   // Debug logging
-//   useEffect(() => {
-//     if (isLoading) {
-//       console.log("⏳ [useUSDCAllowance] Fetching USDC allowance...", {
-//         caller,
-//         contractAddress: USDC_ADDRESS,
-//         spender: LOTTERY_MANAGER_ADDRESS,
-//       });
-//     }
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     console.log("⏳ [useUSDCAllowance] Fetching USDC allowance...", {
+  //       caller,
+  //       contractAddress: USDC_ADDRESS,
+  //       spender: LOTTERY_MANAGER_ADDRESS,
+  //     });
+  //   }
 
-//     if (!isLoading && allowance !== undefined) {
-//       console.log("✅ [useUSDCAllowance] Fetched USDC allowance", {
-//         caller,
-//         allowance: allowance?.toString(),
-//         contractAddress: USDC_ADDRESS,
-//         spender: LOTTERY_MANAGER_ADDRESS,
-//       });
-//     }
+  //   if (!isLoading && allowance !== undefined) {
+  //     console.log("✅ [useUSDCAllowance] Fetched USDC allowance", {
+  //       caller,
+  //       allowance: allowance?.toString(),
+  //       contractAddress: USDC_ADDRESS,
+  //       spender: LOTTERY_MANAGER_ADDRESS,
+  //     });
+  //   }
 
-//     if (isError && !toastShownRef.current.error) {
-//       console.error("❌ [useUSDCAllowance] Error fetching allowance", {
-//         caller,
-//         contractAddress: USDC_ADDRESS,
-//         spender: LOTTERY_MANAGER_ADDRESS,
-//         error,
-//       });
-//       toastShownRef.current.error = true;
-//     }
-//   }, [isLoading, isError, allowance, caller, error]);
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [useUSDCAllowance] Error fetching allowance", {
+  //       caller,
+  //       contractAddress: USDC_ADDRESS,
+  //       spender: LOTTERY_MANAGER_ADDRESS,
+  //       error,
+  //     });
+  //     toastShownRef.current.error = true;
+  //   }
+  // }, [isLoading, isError, allowance, caller, error]);
 
   return {
     allowance,

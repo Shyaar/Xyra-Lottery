@@ -73,28 +73,28 @@ export function useUserActions(userAddress: `0x${string}` | undefined) {
   });
 
   // Log: write status changes
-  useEffect(() => {
-    if (isPending) console.log("⏳ [write] Transaction pending...");
-    if (writeError) console.error("❌ [write:error]", writeError);
-  }, [isPending, writeError]);
+  // useEffect(() => {
+  //   if (isPending) console.log("⏳ [write] Transaction pending...");
+  //   if (writeError) console.error("❌ [write:error]", writeError);
+  // }, [isPending, writeError]);
 
   // Log: hash received
-  useEffect(() => {
-    if (hash) {
-      console.log("📨 [write:hash] Transaction Hash:", hash);
-      toast.info(`Tx sent: ${hash.slice(0, 8)}...`);
-    }
-  }, [hash]);
+  // useEffect(() => {
+  //   if (hash) {
+  //     console.log("📨 [write:hash] Transaction Hash:", hash);
+  //     toast.info(`Tx sent: ${hash.slice(0, 8)}...`);
+  //   }
+  // }, [hash]);
 
   // Log: confirmation lifecycle
   useEffect(() => {
     if (isConfirming) console.log("⏳ [confirm] Waiting for confirmation...");
     if (isConfirmed) {
-      console.log("🎉 [confirm] Transaction confirmed!");
+      // console.log("🎉 [confirm] Transaction confirmed!");
       toast.success("Transaction confirmed!");
     }
     if (confirmError) {
-      console.error("❌ [confirm:error]", confirmError);
+      // console.error("❌ [confirm:error]", confirmError);
       toast.error("Transaction failed during confirmation");
     }
   }, [isConfirming, isConfirmed, confirmError]);
@@ -103,19 +103,19 @@ export function useUserActions(userAddress: `0x${string}` | undefined) {
   // 🚀 REGISTER USER FUNCTION
   // ============================================================
   const registerUser = async () => {
-    console.log("⚙️ [registerUser:called]", {
-      isConnected,
-      userAddress,
-    });
+    // console.log("⚙️ [registerUser:called]", {
+    //   isConnected,
+    //   userAddress,
+    // });
 
     if (!isConnected || !userAddress) {
       toast.error("Wallet not connected!");
-      console.error("❌ [registerUser] No wallet/connection");
+      // console.error("❌ [registerUser] No wallet/connection");
       throw new Error("Wallet not connected or address missing");
     }
 
     try {
-      console.log("📤 [registerUser] Sending transaction...");
+      // console.log("📤 [registerUser] Sending transaction...");
 
       const tx = await writeContractAsync({
         address: contractAddress,
@@ -124,12 +124,12 @@ export function useUserActions(userAddress: `0x${string}` | undefined) {
         account: userAddress,
       });
 
-      console.log("📨 [registerUser] Tx sent:", tx);
-      toast.info("Transaction sent, waiting for confirmation...");
+      // console.log("📨 [registerUser] Tx sent:", tx);
+      // toast.info("Transaction sent, waiting for confirmation...");
 
       return tx;
     } catch (err) {
-      console.error("🔴 [registerUser:error]", err);
+      // console.error("🔴 [registerUser:error]", err);
       toast.error("Registration failed. Check console.");
       throw err;
     }

@@ -32,23 +32,23 @@ export function useRoundActive() {
     query: { enabled: true },
   });
 
-  useEffect(() => {
-    console.log("🔍 [useRoundActive:init]", { caller, contractAddress });
-  }, [caller]);
+  // useEffect(() => {
+  //   console.log("🔍 [useRoundActive:init]", { caller, contractAddress });
+  // }, [caller]);
 
-  useEffect(() => {
-    if (isLoading) toast.info("⏳ roundActive loading...", { autoClose: 1000 });
-    if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useRoundActive] Error reading contract", { caller, contractAddress, isError });
-      toast.error("❌ Error fetching roundActive");
-      toastShownRef.current.error = true;
-    }
-    if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useRoundActive] Result:", { data, caller, contractAddress });
-      toast.success("✅ roundActive loaded");
-      toastShownRef.current.success = true;
-    }
-  }, [data, isLoading, isError, caller]);
+  // useEffect(() => {
+  //   if (isLoading) toast.info("⏳ roundActive loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [useRoundActive] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching roundActive");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (data !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [useRoundActive] Result:", { data, caller, contractAddress });
+  //     toast.success("✅ roundActive loaded");
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [data, isLoading, isError, caller]);
 
   return { data: data as boolean, isLoading, isError, refetch, callerAddress: caller };
 }
@@ -65,21 +65,21 @@ export function useRoundId() {
     query: { enabled: true },
   });
 
-  useEffect(() => console.log("🔍 [useRoundId:init]", { caller, contractAddress }), [caller]);
+  // useEffect(() => console.log("🔍 [useRoundId:init]", { caller, contractAddress }), [caller]);
 
-  useEffect(() => {
-    if (isLoading) toast.info("⏳ roundId loading...", { autoClose: 1000 });
-    if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useRoundId] Error reading contract", { caller, contractAddress, isError });
-      toast.error("❌ Error fetching roundId");
-      toastShownRef.current.error = true;
-    }
-    if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useRoundId] Result:", { data, caller, contractAddress });
-      toast.success("✅ roundId loaded");
-      toastShownRef.current.success = true;
-    }
-  }, [data, isLoading, isError, caller]);
+  // useEffect(() => {
+  //   if (isLoading) toast.info("⏳ roundId loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [useRoundId] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching roundId");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (data !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [useRoundId] Result:", { data, caller, contractAddress });
+  //     toast.success("✅ roundId loaded");
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [data, isLoading, isError, caller]);
 
   return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
 }
@@ -100,15 +100,15 @@ export function useUserTickets(userAddress?: `0x${string}`) {
   useEffect(() => console.log("🔍 [useUserTickets:init]", { caller, contractAddress, userAddress }), [caller, userAddress]);
 
   useEffect(() => {
-    if (isLoading) toast.info("⏳ getUserTickets loading...", { autoClose: 1000 });
+    // if (isLoading) toast.info("⏳ fetching your Tickets...", { autoClose: 1000 });
     if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useUserTickets] Error reading contract", { caller, contractAddress, isError });
+      // console.error("❌ [useUserTickets] Error reading contract", { caller, contractAddress, isError });
       toast.error("❌ Error fetching getUserTickets");
       toastShownRef.current.error = true;
     }
     if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useUserTickets] Result:", { data, caller, contractAddress });
-      toast.success("✅ getUserTickets loaded");
+      // console.log("✅ [useUserTickets] Result:", { data, caller, contractAddress });
+      // toast.success("✅ getUserTickets loaded");
       toastShownRef.current.success = true;
     }
   }, [data, isLoading, isError, caller]);
@@ -129,21 +129,21 @@ export function useTicketById(ticketId: bigint) {
     query: { enabled: !!ticketId },
   });
 
-  useEffect(() => console.log("🔍 [useTicketById:init]", { caller, contractAddress, ticketId }), [caller, ticketId]);
+  // useEffect(() => console.log("🔍 [useTicketById:init]", { caller, contractAddress, ticketId }), [caller, ticketId]);
 
-  useEffect(() => {
-    if (isLoading) toast.info("⏳ getTicketById loading...", { autoClose: 1000 });
-    if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useTicketById] Error reading contract", { caller, contractAddress, isError });
-      toast.error("❌ Error fetching getTicketById");
-      toastShownRef.current.error = true;
-    }
-    if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useTicketById] Result:", { data, caller, contractAddress });
-      toast.success("✅ getTicketById loaded");
-      toastShownRef.current.success = true;
-    }
-  }, [data, isLoading, isError, caller]);
+  // useEffect(() => {
+  //   if (isLoading) toast.info("⏳ getTicketById loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     // console.error("❌ [useTicketById] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching getTicketById");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (data !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [useTicketById] Result:", { data, caller, contractAddress });
+  //     toast.success("✅ getTicketById loaded");
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [data, isLoading, isError, caller]);
 
   return { data: data as Ticket, isLoading, isError, refetch, callerAddress: caller };
 }
@@ -160,23 +160,23 @@ export function useRoundEndTimestamp() {
     query: { enabled: true },
   });
 
-  useEffect(() => {
-    console.log("🔍 [useRoundEndTimestamp:init]", { caller, contractAddress });
-  }, [caller]);
+  // useEffect(() => {
+  //   console.log("🔍 [useRoundEndTimestamp:init]", { caller, contractAddress });
+  // }, [caller]);
 
-  useEffect(() => {
-    if (isLoading) toast.info("⏳ roundEndTimestamp loading...", { autoClose: 1000 });
-    if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useRoundEndTimestamp] Error reading contract", { caller, contractAddress, isError });
-      toast.error("❌ Error fetching roundEndTimestamp");
-      toastShownRef.current.error = true;
-    }
-    if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useRoundEndTimestamp] Result:", { data, caller, contractAddress });
-      toast.success("✅ roundEndTimestamp loaded");
-      toastShownRef.current.success = true;
-    }
-  }, [data, isLoading, isError, caller]);
+  // useEffect(() => {
+  //   if (isLoading) toast.info("⏳ roundEndTimestamp loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [useRoundEndTimestamp] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching roundEndTimestamp");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (data !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [useRoundEndTimestamp] Result:", { data, caller, contractAddress });
+  //     toast.success("✅ roundEndTimestamp loaded");
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [data, isLoading, isError, caller]);
 
   return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
 }
@@ -193,23 +193,23 @@ export function useEntryCount() {
     query: { enabled: true },
   });
 
-  useEffect(() => {
-    console.log("🔍 [useEntryCount:init]", { caller, contractAddress });
-  }, [caller]);
+  // useEffect(() => {
+  //   console.log("🔍 [useEntryCount:init]", { caller, contractAddress });
+  // }, [caller]);
 
-  useEffect(() => {
-    if (isLoading) toast.info("⏳ entryCount loading...", { autoClose: 1000 });
-    if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useEntryCount] Error reading contract", { caller, contractAddress, isError });
-      toast.error("❌ Error fetching entryCount");
-      toastShownRef.current.error = true;
-    }
-    if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useEntryCount] Result:", { data, caller, contractAddress });
-      toast.success("✅ entryCount loaded");
-      toastShownRef.current.success = true;
-    }
-  }, [data, isLoading, isError, caller]);
+  // useEffect(() => {
+  //   if (isLoading) toast.info("⏳ entryCount loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [useEntryCount] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching entryCount");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (data !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [useEntryCount] Result:", { data, caller, contractAddress });
+  //     toast.success("✅ entryCount loaded");
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [data, isLoading, isError, caller]);
 
   return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
 }
@@ -236,21 +236,21 @@ export function useParticipants() {
 
   const participants = data?.map(result => result.result).filter(Boolean) as `0x${string}`[] | undefined;
 
-  useEffect(() => {
-    if (isEntryCountLoading) return;
+  // useEffect(() => {
+  //   if (isEntryCountLoading) return;
 
-    if (isLoading) toast.info("⏳ participants loading...", { autoClose: 1000 });
-    if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useParticipants] Error reading contract", { caller, contractAddress, isError });
-      toast.error("❌ Error fetching participants");
-      toastShownRef.current.error = true;
-    }
-    if (participants !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useParticipants] Result:", { participants, caller, contractAddress });
-      toast.success("✅ participants loaded");
-      toastShownRef.current.success = true;
-    }
-  }, [participants, isLoading, isError, isEntryCountLoading, caller]);
+  //   if (isLoading) toast.info("⏳ participants loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [useParticipants] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching participants");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (participants !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [useParticipants] Result:", { participants, caller, contractAddress });
+  //     toast.success("✅ participants loaded");
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [participants, isLoading, isError, isEntryCountLoading, caller]);
 
   return { data: participants, isLoading: isLoading || isEntryCountLoading, isError, refetch, callerAddress: caller };
 }
@@ -267,18 +267,18 @@ export function useWinner() {
     query: { enabled: true },
   });
 
-  useEffect(() => console.log("🔍 [useWinner:init]", { caller, contractAddress }), [caller]);
+  // useEffect(() => console.log("🔍 [useWinner:init]", { caller, contractAddress }), [caller]);
 
   useEffect(() => {
-    if (isLoading) toast.info("⏳ winner loading...", { autoClose: 1000 });
+    // if (isLoading) toast.info("⏳ winner loading...", { autoClose: 1000 });
     if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useWinner] Error reading contract", { caller, contractAddress, isError });
+      // console.error("❌ [useWinner] Error reading contract", { caller, contractAddress, isError });
       toast.error("❌ Error fetching winner");
       toastShownRef.current.error = true;
     }
     if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useWinner] Result:", { data, caller, contractAddress });
-      toast.success("✅ winner loaded");
+      // console.log("✅ [useWinner] Result:", { data, caller, contractAddress });
+      // toast.success("✅ winner loaded");
       toastShownRef.current.success = true;
     }
   }, [data, isLoading, isError, caller]);
@@ -298,21 +298,21 @@ export function usePrizeAmountRedeemed() {
     query: { enabled: true },
   });
 
-  useEffect(() => console.log("🔍 [usePrizeAmountRedeemed:init]", { caller, contractAddress }), [caller]);
+  // useEffect(() => console.log("🔍 [usePrizeAmountRedeemed:init]", { caller, contractAddress }), [caller]);
 
-  useEffect(() => {
-    if (isLoading) toast.info("⏳ prizeAmountRedeemed loading...", { autoClose: 1000 });
-    if (isError && !toastShownRef.current.error) {
-      console.error("❌ [usePrizeAmountRedeemed] Error reading contract", { caller, contractAddress, isError });
-      toast.error("❌ Error fetching prizeAmountRedeemed");
-      toastShownRef.current.error = true;
-    }
-    if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [usePrizeAmountRedeemed] Result:", { data, caller, contractAddress });
-      toast.success("✅ prizeAmountRedeemed loaded");
-      toastShownRef.current.success = true;
-    }
-  }, [data, isLoading, isError, caller]);
+  // useEffect(() => {
+  //   if (isLoading) toast.info("⏳ prizeAmountRedeemed loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [usePrizeAmountRedeemed] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching prizeAmountRedeemed");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (data !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [usePrizeAmountRedeemed] Result:", { data, caller, contractAddress });
+  //     toast.success("✅ prizeAmountRedeemed loaded");
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [data, isLoading, isError, caller]);
 
   return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
 }
@@ -330,21 +330,98 @@ export function useExpectedRefund(userAddress?: `0x${string}`) {
     query: { enabled: !!userAddress },
   });
 
-  useEffect(() => console.log("🔍 [useExpectedRefund:init]", { caller, contractAddress, userAddress }), [caller, userAddress]);
+  // useEffect(() => console.log("🔍 [useExpectedRefund:init]", { caller, contractAddress, userAddress }), [caller, userAddress]);
+
+  // useEffect(() => {
+  //   if (isLoading) toast.info("⏳ expectedRefund loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [useExpectedRefund] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching expectedRefund");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (data !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [useExpectedRefund] Result:", { data, caller, contractAddress });
+  //     toast.success("✅ expectedRefund loaded");
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [data, isLoading, isError, caller]);
+
+  return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
+}
+
+export function usePrizeClaimed() {
+  const { address: callerAddress } = useAccount();
+  const caller = callerAddress ?? null;
+  const toastShownRef = useRef<{ success?: boolean; error?: boolean }>({});
+
+  const { data, isLoading, isError, refetch } = useReadContract({
+    address: contractAddress,
+    abi: lotteryManagerABI,
+    functionName: "prizeClaimed",
+    query: { enabled: true },
+  });
+
+  // useEffect(() => {
+  //   console.log("🔍 [usePrizeClaimed:init]", { caller, contractAddress });
+  // }, [caller]);
 
   useEffect(() => {
-    if (isLoading) toast.info("⏳ expectedRefund loading...", { autoClose: 1000 });
+    // if (isLoading) {
+    //   toast.info("⏳ prizeClaimed loading...", { autoClose: 1000 });
+    //   return;
+    // }
+
     if (isError && !toastShownRef.current.error) {
-      console.error("❌ [useExpectedRefund] Error reading contract", { caller, contractAddress, isError });
-      toast.error("❌ Error fetching expectedRefund");
+      // console.error("❌ [usePrizeClaimed] Error reading contract", {
+      //   caller,
+      //   contractAddress,
+      //   isError,
+      // });
+      toast.error("❌ Error fetching prizeClaimed");
       toastShownRef.current.error = true;
     }
+
     if (data !== undefined && !toastShownRef.current.success) {
-      console.log("✅ [useExpectedRefund] Result:", { data, caller, contractAddress });
-      toast.success("✅ expectedRefund loaded");
+      // console.log("✅ [usePrizeClaimed] Result:", {
+      //   data,
+      //   caller,
+      //   contractAddress,
+      // });
+      // toast.success("✅ prizeClaimed");
       toastShownRef.current.success = true;
     }
   }, [data, isLoading, isError, caller]);
 
-  return { data: data as bigint, isLoading, isError, refetch, callerAddress: caller };
+  return { data: data as boolean, isLoading, isError, refetch, callerAddress: caller };
+}
+
+
+export function useOwner() {
+  const { address: callerAddress } = useAccount();
+  const caller = callerAddress ?? null;
+  const toastShownRef = useRef<{ success?: boolean; error?: boolean }>({});
+
+  const { data, isLoading, isError, refetch } = useReadContract({
+    address: contractAddress,
+    abi: lotteryManagerABI,
+    functionName: "owner",
+    query: { enabled: true },
+  });
+
+  // useEffect(() => console.log("🔍 [useOwner:init]", { caller, contractAddress }), [caller]);
+
+  // useEffect(() => {
+  //   if (isLoading) toast.info("⏳ owner loading...", { autoClose: 1000 });
+  //   if (isError && !toastShownRef.current.error) {
+  //     console.error("❌ [useOwner] Error reading contract", { caller, contractAddress, isError });
+  //     toast.error("❌ Error fetching owner");
+  //     toastShownRef.current.error = true;
+  //   }
+  //   if (data !== undefined && !toastShownRef.current.success) {
+  //     console.log("✅ [useOwner] Result:", { data, caller, contractAddress });
+  //     toastShownRef.current.success = true;
+  //   }
+  // }, [data, isLoading, isError, caller]);
+
+  return { data: data as `0x${string}`, isLoading, isError, refetch, callerAddress: caller };
 }

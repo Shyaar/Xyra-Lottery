@@ -48,14 +48,14 @@ export function useClaimPrize() {
 
   useEffect(() => {
     if (isWritePending) {
-      toast.info("⏳ Confirm transaction in your wallet...", { autoClose: false });
+      toast.info("⏳ Confirm transaction in your wallet...");
     }
     if (isWriteError && !toastShownRef.current.error) {
-      console.error("❌ [useClaimPrize] Error initiating transaction", {
-        caller,
-        contractAddress,
-        writeError,
-      });
+      // console.error("❌ [useClaimPrize] Error initiating transaction", {
+      //   caller,
+      //   contractAddress,
+      //   writeError,
+      // });
       toast.error(`❌ Error claiming prize: ${writeError?.message || "Unknown error"}`);
       toastShownRef.current.error = true;
     }
@@ -67,14 +67,14 @@ export function useClaimPrize() {
     }
     if (isConfirmed) {
       toast.dismiss(); // Dismiss previous info toast
-      toast.success("✅ Prize claimed successfully!");
+      // toast.success("✅ Prize claimed successfully!");
     }
     if (isConfirmError && !toastShownRef.current.error) {
-      console.error("❌ [useClaimPrize] Error confirming transaction", {
-        caller,
-        contractAddress,
-        confirmError,
-      });
+      // console.error("❌ [useClaimPrize] Error confirming transaction", {
+      //   caller,
+      //   contractAddress,
+      //   confirmError,
+      // });
       toast.error(`❌ Error confirming prize claim: ${confirmError?.message || "Unknown error"}`);
       toastShownRef.current.error = true;
     }

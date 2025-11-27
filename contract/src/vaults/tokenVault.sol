@@ -10,6 +10,8 @@ import "../strategy/IStrategy.sol";
 contract TokenVault is ERC4626, ReentrancyGuard, Ownable {
     IStrategy public strategy;
     bool public strategyPaused;
+    bool public harvesting;
+    bool public withdrawn;
 
     event StrategyUpdated(address indexed oldStrategy, address indexed newStrategy);
     event StrategyPaused(address indexed by, bool paused);
@@ -29,6 +31,7 @@ contract TokenVault is ERC4626, ReentrancyGuard, Ownable {
     function totalAssets() public view override returns (uint256) {
         uint256 localBalance = IERC20(asset()).balanceOf(address(this));
         uint256 stratAssets = 0;
+
         if (address(strategy) != address(0)) {
             try strategy.estimatedTotalAssets() returns (uint256 s) {
                 stratAssets = s;
@@ -36,6 +39,7 @@ contract TokenVault is ERC4626, ReentrancyGuard, Ownable {
                 stratAssets = 0;
             }
         }
+
         return localBalance + stratAssets;
     }
 
@@ -52,35 +56,65 @@ contract TokenVault is ERC4626, ReentrancyGuard, Ownable {
     }
 
     /* ========================= STRATEGY INTERACTIONS ========================= */
-    function earnToStrategy(uint256 amount) external nonReentrant onlyOwner {
+
+    /// @notice send the ENTIRE VAULT BALANCE into the strategy and harvest
+    function earnAndHarvest() external onlyOwner nonReentrant {
         require(!strategyPaused, "Strategy paused");
         require(address(strategy) != address(0), "No strategy set");
 
         IERC20 token = IERC20(asset());
-        _safeApprove(token, address(strategy), 0);
-        _safeApprove(token, address(strategy), amount);
+        uint256 balance = token.balanceOf(address(this));
+        require(balance > 0, "No assets to earn");
 
-        strategy.deposit(amount);
-        emit EarnedToStrategy(amount);
+        // Approve & deposit
+        _safeApprove(token, address(strategy), 0);
+        _safeApprove(token, address(strategy), balance);
+        strategy.deposit(balance);
+
+        emit EarnedToStrategy(balance);
+
+        // Harvest
+        harvesting = true;
+        uint256 harvested = strategy.harvest();
+        emit Harvested(harvested);
     }
 
-    function withdrawFromStrategy(uint256 amount) external nonReentrant onlyOwner returns (uint256) {
+    function withdrawFromStrategy(uint256 amount) 
+        external 
+        nonReentrant 
+        onlyOwner 
+        returns (uint256) 
+    {
         require(address(strategy) != address(0), "No strategy set");
+
+        withdrawn = true;
 
         IERC20 token = IERC20(asset());
         uint256 balBefore = token.balanceOf(address(this));
-        strategy.withdraw(amount);
-        uint256 balAfter = token.balanceOf(address(this));
 
-        emit WithdrawnFromStrategy(amount, balAfter - balBefore);
-        return balAfter - balBefore;
+        strategy.withdraw(amount);
+
+        uint256 balAfter = token.balanceOf(address(this));
+        uint256 received = balAfter - balBefore;
+
+        emit WithdrawnFromStrategy(amount, received);
+        return received;
     }
 
     function harvest() external nonReentrant returns (uint256) {
         require(address(strategy) != address(0), "No strategy set");
+
+        harvesting = true;
+
         uint256 harvested = strategy.harvest();
         emit Harvested(harvested);
         return harvested;
+    }
+
+    /* ========================= FLAGS RESET ========================= */
+    function resetFlags() external onlyOwner {
+        harvesting = false;
+        withdrawn = false;
     }
 
     /* ========================= SAFETY / RECOVERY ========================= */
@@ -89,10 +123,16 @@ contract TokenVault is ERC4626, ReentrancyGuard, Ownable {
         _safeTransfer(token, to, amount);
     }
 
-    function emergencyWithdrawAllFromStrategy() external onlyOwner nonReentrant {
+    function emergencyWithdrawAllFromStrategy() 
+        external 
+        onlyOwner 
+        nonReentrant 
+    {
         require(address(strategy) != address(0), "No strategy set");
+        
         uint256 requested = type(uint256).max;
         uint256 actual = strategy.withdraw(requested);
+
         emit WithdrawnFromStrategy(requested, actual);
     }
 

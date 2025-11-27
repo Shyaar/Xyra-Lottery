@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import Modal from './Modal';
-import { useParticipants } from '../../../hooks/useReadLottery'; // Adjusted path
+import { useParticipants } from '../../../../hooks/useReadLottery'; // Adjusted path
 
 interface ParticipantsModalProps {
     isOpen: boolean;
